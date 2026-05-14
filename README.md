@@ -20,11 +20,9 @@ Pipeline completo de dados para um e-commerce fictício: ingestão CSV → stagi
 6. [Como rodar — Setup local](#como-rodar--setup-local)
 7. [Como rodar — Docker (Postgres + Airflow)](#como-rodar--docker-postgres--airflow)
 8. [Pipeline ETL](#pipeline-etl)
-9. [Modelo semântico Power BI](#modelo-semântico-power-bi)
-10. [Dashboard HTML interativo](#dashboard-html-interativo)
-11. [Apresentação PowerPoint](#apresentação-powerpoint)
-12. [Resultados — KPIs do ano](#resultados--kpis-do-ano)
-13. [Roadmap & próximos passos](#roadmap--próximos-passos)
+9. [Dashboard HTML interativo](#dashboard-html-interativo)
+10. [Resultados — KPIs do ano](#resultados--kpis-do-ano)
+11. [Roadmap & próximos passos](#roadmap--próximos-passos)
 
 ---
 
@@ -38,6 +36,8 @@ A entrega cobre dois frentes complementares:
 - **Comunicação de resultados** — dashboard interativo HTML com 5 abas e filtros, e apresentação PowerPoint executiva de 12 slides com paleta premium.
 
 O escopo analítico inclui **DRE (Demonstrativo de Resultado)**, **DFC (Fluxo de Caixa)**, análise de vendas multidimensional, taxa de devolução e cobertura de estoque.
+
+📈 **Link Dashboard:**
 
 ---
 
