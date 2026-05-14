@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard E-commerce — Apresentação Premium</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1F2A44;
+    --primary-soft: #2D3B5F;
+    --accent: #00B4A6;
+    --accent-dark: #008F84;
+    --amber: #F4A261;
+    --coral: #E76F51;
+    --neutral: #F4F4F4;
+    --card: #FFFFFF;
+    --text: #2B2B2B;
+    --muted: #7A7A7A;
+    --positive: #2A9D8F;
+    --negative: #D62828;
+    --border: #E5E5E5;
+    --shadow: 0 4px 16px rgba(31, 42, 68, 0.08);
+    --shadow-hover: 0 8px 24px rgba(31, 42, 68, 0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--neutral);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-soft) 100%);
+    color: #FFF;
+    padding: 18px 32px;
+    box-shadow: var(--shadow);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-mark {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: var(--accent);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 18px;
+    box-shadow: 0 4px 12px rgba(0, 180, 166, 0.3);
+  }
+  .brand h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.3px; }
+  .brand .sub { font-size: 11px; color: #B8C3D9; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 2px; }
+
+  .header-actions { display: flex; gap: 12px; align-items: center; }
+  .btn {
+    background: var(--accent); color: #FFF;
+    border: none; padding: 10px 18px;
+    border-radius: 8px; cursor: pointer;
+    font-family: inherit; font-weight: 600; font-size: 13px;
+    display: flex; align-items: center; gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .btn-secondary { background: rgba(255,255,255,0.12); }
+  .btn-secondary:hover { background: rgba(255,255,255,0.22); }
+  .btn-icon { font-size: 16px; }
+
+  /* ===== FILTERS BAR ===== */
+  .filters {
+    background: var(--card);
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .filter-group { display: flex; align-items: center; gap: 8px; }
+  .filter-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+  .filter-input, .filter-select {
+    background: var(--neutral);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-family: inherit; font-size: 13px; color: var(--text);
+    cursor: pointer;
+    min-width: 130px;
+  }
+  .filter-select:focus, .filter-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+  /* ===== TABS ===== */
+  .tabs {
+    background: var(--card);
+    padding: 0 32px;
+    display: flex; gap: 4px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 14px 22px;
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 600; font-size: 13px;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: inherit;
+  }
+  .tab:hover { color: var(--primary); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ===== CONTENT ===== */
+  .content { padding: 24px 32px; max-width: 1600px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== KPI ROW ===== */
+  .kpi-row { display: grid; gap: 16px; margin-bottom: 24px; }
+  .kpi-row.cols-5 { grid-template-columns: repeat(5, 1fr); }
+  .kpi-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .kpi-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .kpi-row.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+  .kpi-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent);
+    transition: all 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .kpi-card.primary { border-left-color: var(--primary); }
+  .kpi-card.amber { border-left-color: var(--amber); }
+  .kpi-card.coral { border-left-color: var(--coral); }
+  .kpi-card.positive { border-left-color: var(--positive); }
+  .kpi-card.negative { border-left-color: var(--negative); }
+
+  .kpi-label {
+    color: var(--muted);
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .kpi-value { color: var(--primary); font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .kpi-delta { font-size: 12px; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .kpi-delta.up { color: var(--positive); }
+  .kpi-delta.down { color: var(--negative); }
+  .kpi-delta.neutral { color: var(--muted); }
+
+  /* ===== CHART GRID ===== */
+  .grid { display: grid; gap: 16px; }
+  .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid.split-60-40 { grid-template-columns: 3fr 2fr; }
+  .grid.split-40-60 { grid-template-columns: 2fr 3fr; }
+  .grid.cols-1 { grid-template-columns: 1fr; }
+  @media (max-width: 1100px) {
+    .kpi-row.cols-5, .kpi-row.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid.cols-2, .grid.cols-3, .grid.split-60-40, .grid.split-40-60 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    color: var(--primary);
+    font-size: 14px; font-weight: 600;
+    margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .card-title .badge {
+    font-size: 10px; font-weight: 600;
+    background: var(--neutral); color: var(--muted);
+    padding: 4px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .chart-container { position: relative; height: 280px; }
+  .chart-container.tall { height: 360px; }
+  .chart-container.short { height: 200px; }
+
+  /* ===== TABLES ===== */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table thead th {
+    background: var(--primary); color: #FFF;
+    padding: 10px 12px; text-align: left;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px;
+    position: sticky; top: 0;
+  }
+  .data-table thead th:first-child { border-top-left-radius: 8px; }
+  .data-table thead th:last-child { border-top-right-radius: 8px; }
+  .data-table tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .data-table tbody tr:nth-child(even) { background: #FAFBFC; }
+  .data-table tbody tr:hover { background: rgba(0, 180, 166, 0.05); }
+  .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .data-table .bar {
+    background: linear-gradient(90deg, var(--accent) var(--w, 0%), transparent var(--w, 0%));
+    background-color: rgba(0, 180, 166, 0.06);
+  }
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: 600;
+  }
+  .pill.ok { background: #E6F7F4; color: var(--positive); }
+  .pill.warn { background: #FDF3E5; color: #B97700; }
+  .pill.bad { background: #FBE7E7; color: var(--negative); }
+
+  /* ===== DRE WATERFALL TABLE ===== */
+  .dre-table { width: 100%; border-collapse: collapse; }
+  .dre-table td { padding: 12px 16px; font-size: 14px; }
+  .dre-table .label { font-weight: 600; color: var(--primary); }
+  .dre-table .value { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .dre-table .deduction .value { color: var(--negative); }
+  .dre-table .total { background: var(--primary); color: #FFF; }
+  .dre-table .total .label, .dre-table .total .value { color: #FFF; }
+  .dre-table .subtotal { background: rgba(0, 180, 166, 0.08); }
+  .dre-table .subtotal .label, .dre-table .subtotal .value { color: var(--accent-dark); }
+
+  /* ===== EMPTY STATE ===== */
+  .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center; padding: 24px;
+    color: var(--muted); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 32px;
+    background: var(--card);
+  }
+
+  /* Heatmap */
+  .heatmap { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
+  .heatmap-cell {
+    aspect-ratio: 1; border-radius: 4px;
+    display: grid; place-items: center;
+    font-size: 10px; color: #FFF; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-row">
+    <div class="brand">
+      <div class="brand-mark">EC</div>
+      <div>
+        <h1>Dashboard E-commerce</h1>
+        <div class="sub">Apresentação Premium · DRE & DFC</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="exportData()">
+        <span class="btn-icon">↓</span> Exportar
+      </button>
+      <button class="btn" onclick="clearFilters()">
+        <span class="btn-icon">⟲</span> Limpar Filtros
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- FILTERS -->
+<div class="filters">
+  <div class="filter-group">
+    <span class="filter-label">Período</span>
+    <select id="filter-from" class="filter-select" onchange="applyFilters()"></select>
+    <span style="color: var(--muted)">→</span>
+    <select id="filter-to" class="filter-select" onchange="applyFilters()"></select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Canal</span>
+    <select id="filter-canal" class="filter-select" onchange="applyFilters()">
+      <option value="">Todos</option>
+      <option>Site</option>
+      <option>Marketplace</option>
+      <option>App</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Categoria</span>
+    <select id="filter-categoria" class="filter-select" onchange="applyFilters()">
+      <option value="">Todas</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Estado</span>
+    <select id="filter-estado" class="filter-select" onchange="applyFilters()">
+      <option value="">Todos</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Pagamento</span>
+    <select id="filter-pagamento" class="filter-select" onchange="applyFilters()">
+      <option value="">Todos</option>
+      <option>Pix</option>
+      <option>Boleto</option>
+      <option>Cartão de Crédito</option>
+    </select>
+  </div>
+</div>
+
+<!-- TABS -->
+<nav class="tabs" id="tabs">
+  <button class="tab active" data-panel="visao">Visão Geral</button>
+  <button class="tab" data-panel="dre">DRE</button>
+  <button class="tab" data-panel="dfc">DFC</button>
+  <button class="tab" data-panel="vendas">Vendas</button>
+  <button class="tab" data-panel="devolucoes">Devoluções &amp; Estoque</button>
+</nav>
+
+<!-- CONTENT -->
+<main class="content">
+
+<!-- ====== PANEL: VISÃO GERAL ====== -->
+<section class="panel active" id="panel-visao">
+  <div class="kpi-row cols-5">
+    <div class="kpi-card primary">
+      <div class="kpi-label">Receita Bruta</div>
+      <div class="kpi-value" id="kpi-receita">R$ 0</div>
+      <div class="kpi-delta neutral" id="kpi-receita-delta">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Receita Líquida</div>
+      <div class="kpi-value" id="kpi-liquida">R$ 0</div>
+      <div class="kpi-delta neutral">Após devoluções e descontos</div>
+    </div>
+    <div class="kpi-card positive">
+      <div class="kpi-label">Lucro Bruto</div>
+      <div class="kpi-value" id="kpi-lucro">R$ 0</div>
+      <div class="kpi-delta up" id="kpi-margem">Margem —</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Ticket Médio</div>
+      <div class="kpi-value" id="kpi-ticket">R$ 0</div>
+      <div class="kpi-delta neutral" id="kpi-pedidos">— pedidos</div>
+    </div>
+    <div class="kpi-card coral">
+      <div class="kpi-label">Taxa Devolução</div>
+      <div class="kpi-value" id="kpi-devolucao">0%</div>
+      <div class="kpi-delta neutral" id="kpi-devolucao-val">R$ 0 perdidos</div>
+    </div>
+  </div>
+
+  <div class="grid split-60-40">
+    <div class="card">
+      <div class="card-title">Receita por Mês <span class="badge">12M</span></div>
+      <div class="chart-container"><canvas id="chart-tendencia"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Receita por Categoria <span class="badge">Top</span></div>
+      <div class="chart-container"><canvas id="chart-categoria"></canvas></div>
+    </div>
+  </div>
+
+  <div style="height: 16px"></div>
+
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="card-title">Top 10 Produtos <span class="badge">Receita</span></div>
+      <table class="data-table">
+        <thead><tr><th>Produto</th><th>Categoria</th><th class="num">Receita</th><th class="num">Pedidos</th></tr></thead>
+        <tbody id="tbl-produtos"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Receita por Estado <span class="badge">UF</span></div>
+      <div class="chart-container"><canvas id="chart-estado"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PANEL: DRE ====== -->
+<section class="panel" id="panel-dre">
+  <div class="kpi-row cols-4">
+    <div class="kpi-card primary">
+      <div class="kpi-label">Receita Bruta</div>
+      <div class="kpi-value" id="dre-rb">R$ 0</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Receita Líquida</div>
+      <div class="kpi-value" id="dre-rl">R$ 0</div>
+    </div>
+    <div class="kpi-card positive">
+      <div class="kpi-label">Lucro Bruto</div>
+      <div class="kpi-value" id="dre-lb">R$ 0</div>
+      <div class="kpi-delta up" id="dre-mb">Margem Bruta —</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Resultado Operacional</div>
+      <div class="kpi-value" id="dre-ro">R$ 0</div>
+      <div class="kpi-delta up" id="dre-ml">Margem Líquida —</div>
+    </div>
+  </div>
+
+  <div class="grid split-40-60">
+    <div class="card">
+      <div class="card-title">Estrutura do DRE <span class="badge">CMV 60%</span></div>
+      <table class="dre-table">
+        <tr><td class="label">(+) Receita Bruta</td><td class="value" id="dre-line-rb">R$ 0</td></tr>
+        <tr class="deduction"><td class="label">(−) Devoluções</td><td class="value" id="dre-line-dev">R$ 0</td></tr>
+        <tr class="deduction"><td class="label">(−) Descontos</td><td class="value" id="dre-line-desc">R$ 0</td></tr>
+        <tr class="subtotal"><td class="label">(=) Receita Líquida</td><td class="value" id="dre-line-rl">R$ 0</td></tr>
+        <tr class="deduction"><td class="label">(−) CMV (60%)</td><td class="value" id="dre-line-cmv">R$ 0</td></tr>
+        <tr class="subtotal"><td class="label">(=) Lucro Bruto</td><td class="value" id="dre-line-lb">R$ 0</td></tr>
+        <tr class="deduction"><td class="label">(−) Frete</td><td class="value" id="dre-line-frete">R$ 0</td></tr>
+        <tr class="total"><td class="label">(=) Resultado Operacional</td><td class="value" id="dre-line-ro">R$ 0</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Cascata DRE <span class="badge">Visual</span></div>
+      <div class="chart-container tall"><canvas id="chart-cascata"></canvas></div>
+    </div>
+  </div>
+
+  <div style="height: 16px"></div>
+
+  <div class="card">
+    <div class="card-title">Detalhamento Mensal <span class="badge">Receita & Margem</span></div>
+    <div class="chart-container"><canvas id="chart-dre-mensal"></canvas></div>
+  </div>
+</section>
+
+<!-- ====== PANEL: DFC ====== -->
+<section class="panel" id="panel-dfc">
+  <div class="kpi-row cols-4">
+    <div class="kpi-card positive">
+      <div class="kpi-label">Entradas</div>
+      <div class="kpi-value" id="dfc-in">R$ 0</div>
+    </div>
+    <div class="kpi-card coral">
+      <div class="kpi-label">Saídas Totais</div>
+      <div class="kpi-value" id="dfc-out">R$ 0</div>
+      <div class="kpi-delta neutral">Devoluções + Frete</div>
+    </div>
+    <div class="kpi-card primary">
+      <div class="kpi-label">Fluxo Líquido</div>
+      <div class="kpi-value" id="dfc-net">R$ 0</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">% Entradas Entregues</div>
+      <div class="kpi-value" id="dfc-entregues">0%</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fluxo Mensal <span class="badge">Entradas vs Saídas + Saldo Acumulado</span></div>
+    <div class="chart-container tall"><canvas id="chart-dfc-fluxo"></canvas></div>
+  </div>
+
+  <div style="height: 16px"></div>
+
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="card-title">Receita por Forma de Pagamento <span class="badge">R$</span></div>
+      <div class="chart-container"><canvas id="chart-pagamento"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Status dos Pedidos <span class="badge">Aprovação</span></div>
+      <div class="chart-container"><canvas id="chart-status"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PANEL: VENDAS ====== -->
+<section class="panel" id="panel-vendas">
+  <div class="kpi-row cols-4">
+    <div class="kpi-card primary">
+      <div class="kpi-label">Itens Vendidos</div>
+      <div class="kpi-value" id="vendas-itens">0</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Pedidos</div>
+      <div class="kpi-value" id="vendas-pedidos">0</div>
+    </div>
+    <div class="kpi-card positive">
+      <div class="kpi-label">Preço Médio Item</div>
+      <div class="kpi-value" id="vendas-preco">R$ 0</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">% Desconto sobre Receita</div>
+      <div class="kpi-value" id="vendas-pct-desconto">0%</div>
+    </div>
+  </div>
+
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="card-title">Receita por Canal de Venda <span class="badge">Canais</span></div>
+      <div class="chart-container"><canvas id="chart-canal"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Evolução por Canal <span class="badge">Mensal</span></div>
+      <div class="chart-container"><canvas id="chart-canal-mes"></canvas></div>
+    </div>
+  </div>
+
+  <div style="height: 16px"></div>
+
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="card-title">Categorias <span class="badge">Receita & Itens</span></div>
+      <table class="data-table">
+        <thead><tr><th>Categoria</th><th class="num">Receita</th><th class="num">Pedidos</th><th class="num">Itens</th></tr></thead>
+        <tbody id="tbl-categorias"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Estados <span class="badge">UF Ranking</span></div>
+      <table class="data-table">
+        <thead><tr><th>UF</th><th class="num">Receita</th><th class="num">Pedidos</th><th class="num">Ticket</th></tr></thead>
+        <tbody id="tbl-estados"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PANEL: DEVOLUÇÕES & ESTOQUE ====== -->
+<section class="panel" id="panel-devolucoes">
+  <div class="kpi-row cols-4">
+    <div class="kpi-card coral">
+      <div class="kpi-label">Qtd Devoluções</div>
+      <div class="kpi-value" id="dev-qtd">0</div>
+    </div>
+    <div class="kpi-card negative">
+      <div class="kpi-label">Valor Devolvido</div>
+      <div class="kpi-value" id="dev-valor">R$ 0</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Taxa de Devolução</div>
+      <div class="kpi-value" id="dev-taxa">0%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">% Receita Devolvida</div>
+      <div class="kpi-value" id="dev-pct">0%</div>
+    </div>
+  </div>
+
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="card-title">Devoluções por Mês <span class="badge">Tendência</span></div>
+      <div class="chart-container"><canvas id="chart-dev-mes"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Status das Devoluções <span class="badge">Pipeline</span></div>
+      <div class="chart-container"><canvas id="chart-dev-status"></canvas></div>
+    </div>
+  </div>
+
+  <div style="height: 16px"></div>
+
+  <div class="kpi-row cols-3">
+    <div class="kpi-card primary">
+      <div class="kpi-label">Estoque Atual Total</div>
+      <div class="kpi-value" id="est-atual">0</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Estoque Mínimo Total</div>
+      <div class="kpi-value" id="est-min">0</div>
+    </div>
+    <div class="kpi-card positive">
+      <div class="kpi-label">Folga de Estoque</div>
+      <div class="kpi-value" id="est-folga">0</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Estoque por Produto <span class="badge">Atual vs Mínimo</span></div>
+    <table class="data-table">
+      <thead><tr><th>Produto</th><th>Categoria</th><th class="num">Atual</th><th class="num">Mínimo</th><th class="num">Folga</th><th>Status</th></tr></thead>
+      <tbody id="tbl-estoque"></tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  Dashboard E-commerce · Premium Edition · Dados reais extraídos do modelo Power BI · Maio 2026
+</footer>
+
+<script>
+// ============ DADOS ============
+const DATA = {
+  meses: [
+    { mes: 1,  nome: 'Jan', receita: 429767.78, devolucoes: 19103.52, frete: 5852.65, descontos: 16544.43, pedidos: 245 },
+    { mes: 2,  nome: 'Fev', receita: 463331.37, devolucoes: 26457.08, frete: 5541.93, descontos: 19097.74, pedidos: 229 },
+    { mes: 3,  nome: 'Mar', receita: 495444.19, devolucoes: 25375.75, frete: 6140.97, descontos: 18499.68, pedidos: 258 },
+    { mes: 4,  nome: 'Abr', receita: 549507.71, devolucoes: 25396.35, frete: 6680.94, descontos: 18089.34, pedidos: 266 },
+    { mes: 5,  nome: 'Mai', receita: 473087.99, devolucoes: 24231.80, frete: 5797.82, descontos: 17875.04, pedidos: 237 },
+    { mes: 6,  nome: 'Jun', receita: 429321.17, devolucoes: 18229.46, frete: 5534.99, descontos: 14782.06, pedidos: 215 },
+    { mes: 7,  nome: 'Jul', receita: 458741.77, devolucoes: 25570.95, frete: 7058.70, descontos: 18125.37, pedidos: 278 },
+    { mes: 8,  nome: 'Ago', receita: 457877.02, devolucoes: 20413.58, frete: 5802.28, descontos: 15207.51, pedidos: 242 },
+    { mes: 9,  nome: 'Set', receita: 458713.01, devolucoes: 27955.71, frete: 5833.77, descontos: 17395.48, pedidos: 233 },
+    { mes: 10, nome: 'Out', receita: 471502.57, devolucoes:  7598.83, frete: 6041.97, descontos: 16580.98, pedidos: 261 },
+    { mes: 11, nome: 'Nov', receita: 570217.90, devolucoes: 32732.57, frete: 6988.30, descontos: 18439.67, pedidos: 265 },
+    { mes: 12, nome: 'Dez', receita: 517811.81, devolucoes: 25876.52, frete: 6828.46, descontos: 19712.99, pedidos: 271 }
+  ],
+  categorias: [
+    { nome: 'Notebook',     receita: 2766614.17, pedidos: 515, itens: 974 },
+    { nome: 'Smartphone',   receita: 1275087.54, pedidos: 444, itens: 830 },
+    { nome: 'Monitores',    receita:  851822.02, pedidos: 489, itens: 943 },
+    { nome: 'Tablet',       receita:  481326.15, pedidos: 246, itens: 480 },
+    { nome: 'Áudio',        receita:  161828.99, pedidos: 517, itens: 960 },
+    { nome: 'Periféricos',  receita:  150240.85, pedidos: 517, itens: 986 },
+    { nome: 'Acessórios',   receita:   88404.57, pedidos: 272, itens: 508 }
+  ],
+  estados: [
+    { uf: 'SP', receita: 1143339.10, pedidos: 617 },
+    { uf: 'RS', receita:  678482.11, pedidos: 315 },
+    { uf: 'MG', receita:  591316.94, pedidos: 293 },
+    { uf: 'GO', receita:  575251.96, pedidos: 299 },
+    { uf: 'BA', receita:  569889.06, pedidos: 301 },
+    { uf: 'SC', receita:  569168.03, pedidos: 306 },
+    { uf: 'PE', receita:  560972.70, pedidos: 297 },
+    { uf: 'PR', receita:  555556.44, pedidos: 290 },
+    { uf: 'RJ', receita:  531347.95, pedidos: 282 }
+  ],
+  canais: [
+    { canal: 'Marketplace', receita: 1958581.33, pedidos:  962 },
+    { canal: 'Site',        receita: 1947633.69, pedidos: 1032 },
+    { canal: 'App',         receita: 1869109.27, pedidos: 1006 }
+  ],
+  pagamento: [
+    { tipo: 'Pix',                receita: 2003791.02, pedidos: 1011, ticket: 1981.99 },
+    { tipo: 'Cartão de Crédito',  receita: 1932546.92, pedidos: 1012, ticket: 1909.63 },
+    { tipo: 'Boleto',             receita: 1838986.35, pedidos:  977, ticket: 1882.28 }
+  ],
+  produtos: [
+    { produto: 'Notebook Pro 14',       categoria: 'Notebook',    receita: 1439380.35, itens: 466, pedidos: 258 },
+    { produto: 'Notebook Air 13',       categoria: 'Notebook',    receita: 1327233.82, itens: 508, pedidos: 257 },
+    { produto: 'Smartphone S12',        categoria: 'Smartphone',  receita:  674670.27, itens: 386, pedidos: 212 },
+    { produto: 'Smartphone S12 Lite',   categoria: 'Smartphone',  receita:  600417.27, itens: 444, pedidos: 232 },
+    { produto: 'Monitor 27 QHD',        categoria: 'Monitores',   receita:  531020.51, itens: 467, pedidos: 235 },
+    { produto: 'Tablet T10',            categoria: 'Tablet',      receita:  481326.15, itens: 480, pedidos: 246 },
+    { produto: 'Monitor 24 Full HD',    categoria: 'Monitores',   receita:  320801.51, itens: 476, pedidos: 254 },
+    { produto: 'Teclado Mecânico K80',  categoria: 'Periféricos', receita:  106094.57, itens: 453, pedidos: 245 },
+    { produto: 'Headset Gamer H7',      categoria: 'Áudio',       receita:   97849.16, itens: 490, pedidos: 263 },
+    { produto: 'Webcam HD Pro',         categoria: 'Acessórios',  receita:   88404.57, itens: 508, pedidos: 272 }
+  ],
+  devolucoesStatus: [
+    { status: 'Concluída',  qtd: 147, valor: 197743.04 },
+    { status: 'Em análise', qtd:  63, valor:  81199.08 }
+  ],
+  statusPedido: [
+    { status: 'Entregue',  receita: 3523428.75, pedidos: 1847 },
+    { status: 'Cancelado', receita: 1222958.35, pedidos:  602 },
+    { status: 'Faturado',  receita: 1028937.19, pedidos:  551 }
+  ],
+  canalMes: [
+    {m:1,c:'Site',v:138426.86},{m:1,c:'Marketplace',v:166517.68},{m:1,c:'App',v:124823.24},
+    {m:2,c:'Site',v:174657.95},{m:2,c:'Marketplace',v:169026.40},{m:2,c:'App',v:119647.02},
+    {m:3,c:'Marketplace',v:131733.53},{m:3,c:'Site',v:209480.35},{m:3,c:'App',v:154230.31},
+    {m:4,c:'Marketplace',v:197304.33},{m:4,c:'Site',v:146036.14},{m:4,c:'App',v:206167.24},
+    {m:5,c:'Marketplace',v:154429.24},{m:5,c:'Site',v:151702.13},{m:5,c:'App',v:166956.62},
+    {m:6,c:'Marketplace',v:155838.56},{m:6,c:'Site',v:151699.58},{m:6,c:'App',v:121783.03},
+    {m:7,c:'Marketplace',v:162534.01},{m:7,c:'Site',v:124186.65},{m:7,c:'App',v:172021.11},
+    {m:8,c:'Site',v:125937.39},{m:8,c:'Marketplace',v:172585.72},{m:8,c:'App',v:159353.91},
+    {m:9,c:'Marketplace',v:153772.39},{m:9,c:'Site',v:138348.50},{m:9,c:'App',v:166592.12},
+    {m:10,c:'Site',v:171993.15},{m:10,c:'Marketplace',v:142074.04},{m:10,c:'App',v:157435.38},
+    {m:11,c:'Marketplace',v:176599.12},{m:11,c:'Site',v:216579.26},{m:11,c:'App',v:177039.52},
+    {m:12,c:'Marketplace',v:176166.31},{m:12,c:'Site',v:198585.73},{m:12,c:'App',v:143059.77}
+  ],
+  estoque: [
+    { produto: 'Webcam HD Pro',       categoria: 'Acessórios',   atual: 211, minimo: 49 },
+    { produto: 'Monitor 27 QHD',      categoria: 'Monitores',    atual: 112, minimo: 64 },
+    { produto: 'Monitor 24 Full HD', categoria: 'Monitores',    atual: 100, minimo: 21 },
+    { produto: 'Mouse Sem Fio X1',    categoria: 'Periféricos',  atual: 416, minimo: 25 },
+    { produto: 'Tablet T10',          categoria: 'Tablet',       atual: 124, minimo: 58 },
+    { produto: 'Smartphone S12 Lite', categoria: 'Smartphone',   atual: 304, minimo: 25 },
+    { produto: 'Headset Gamer H7',    categoria: 'Áudio',        atual: 201, minimo: 57 },
+    { produto: 'Notebook Pro 14',     categoria: 'Notebook',     atual: 503, minimo: 67 },
+    { produto: 'Smartphone S12',      categoria: 'Smartphone',   atual: 451, minimo: 37 },
+    { produto: 'Caixa de Som Mini',   categoria: 'Áudio',        atual: 187, minimo: 71 },
+    { produto: 'Teclado Mecânico K80', categoria: 'Periféricos', atual: 369, minimo: 25 },
+    { produto: 'Notebook Air 13',     categoria: 'Notebook',     atual: 271, minimo: 67 }
+  ]
+};
+
+const PALETTE = ['#00B4A6','#1F2A44','#F4A261','#E76F51','#2A9D8F','#264653','#E9C46A','#8AB17D','#6C757D','#D62828'];
+const COLORS = {
+  primary: '#1F2A44', accent: '#00B4A6', amber: '#F4A261', coral: '#E76F51',
+  positive: '#2A9D8F', negative: '#D62828', muted: '#7A7A7A', text: '#2B2B2B'
+};
+
+// ============ FORMATAÇÃO ============
+const brl = v => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+const brlShort = v => {
+  const abs = Math.abs(v);
+  if (abs >= 1e6) return 'R$ ' + (v/1e6).toFixed(2) + 'M';
+  if (abs >= 1e3) return 'R$ ' + (v/1e3).toFixed(1) + 'k';
+  return brl(v);
+};
+const pct = v => (v*100).toFixed(2) + '%';
+const num = v => v.toLocaleString('pt-BR');
+
+// ============ FILTROS ============
+const NOMES_MES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+function initFilters() {
+  const from = document.getElementById('filter-from');
+  const to = document.getElementById('filter-to');
+  for (let i=0; i<12; i++) {
+    const o1 = document.createElement('option'); o1.value=i+1; o1.textContent=NOMES_MES[i]; from.appendChild(o1);
+    const o2 = document.createElement('option'); o2.value=i+1; o2.textContent=NOMES_MES[i]; to.appendChild(o2);
+  }
+  from.value = 1;
+  to.value = 12;
+
+  const catSel = document.getElementById('filter-categoria');
+  DATA.categorias.forEach(c => {
+    const o = document.createElement('option'); o.value=c.nome; o.textContent=c.nome; catSel.appendChild(o);
+  });
+  const stSel = document.getElementById('filter-estado');
+  DATA.estados.forEach(e => {
+    const o = document.createElement('option'); o.value=e.uf; o.textContent=e.uf; stSel.appendChild(o);
+  });
+}
+
+function getFilters() {
+  return {
+    from: parseInt(document.getElementById('filter-from').value),
+    to: parseInt(document.getElementById('filter-to').value),
+    canal: document.getElementById('filter-canal').value,
+    categoria: document.getElementById('filter-categoria').value,
+    estado: document.getElementById('filter-estado').value,
+    pagamento: document.getElementById('filter-pagamento').value
+  };
+}
+
+function clearFilters() {
+  document.getElementById('filter-from').value = 1;
+  document.getElementById('filter-to').value = 12;
+  document.getElementById('filter-canal').value = '';
+  document.getElementById('filter-categoria').value = '';
+  document.getElementById('filter-estado').value = '';
+  document.getElementById('filter-pagamento').value = '';
+  applyFilters();
+}
+
+// ============ AGREGADORES ============
+// Share multiplicativo: cada filtro de dimensão reduz a participação total
+// proporcionalmente. Aplicado a TODOS os KPIs e gráficos.
+function getDimShare() {
+  const f = getFilters();
+  let share = 1;
+  if (f.canal) {
+    const total = DATA.canais.reduce((a,b)=>a+b.receita,0);
+    share *= (DATA.canais.find(c=>c.canal===f.canal)?.receita || 0) / total;
+  }
+  if (f.categoria) {
+    const total = DATA.categorias.reduce((a,b)=>a+b.receita,0);
+    share *= (DATA.categorias.find(c=>c.nome===f.categoria)?.receita || 0) / total;
+  }
+  if (f.estado) {
+    const total = DATA.estados.reduce((a,b)=>a+b.receita,0);
+    share *= (DATA.estados.find(e=>e.uf===f.estado)?.receita || 0) / total;
+  }
+  if (f.pagamento) {
+    const total = DATA.pagamento.reduce((a,b)=>a+b.receita,0);
+    share *= (DATA.pagamento.find(p=>p.tipo===f.pagamento)?.receita || 0) / total;
+  }
+  return share;
+}
+
+function getMesesFiltrados() {
+  const f = getFilters();
+  const share = getDimShare();
+  const meses = DATA.meses.filter(m => m.mes >= f.from && m.mes <= f.to);
+  return meses.map(m => ({
+    ...m,
+    receita: m.receita * share,
+    devolucoes: m.devolucoes * share,
+    frete: m.frete * share,
+    descontos: m.descontos * share,
+    pedidos: Math.round(m.pedidos * share)
+  }));
+}
+
+// Aplica share das OUTRAS dimensões (excluindo a própria) — útil para gráficos
+// de barras por categoria/estado/canal/pagamento, que devem escalar baseado nos
+// filtros das demais dimensões mas mostrar suas próprias categorias inteiras.
+function getOtherDimShare(exclude) {
+  const f = getFilters();
+  let share = 1;
+  if (f.canal && exclude !== 'canal') {
+    const total = DATA.canais.reduce((a,b)=>a+b.receita,0);
+    share *= (DATA.canais.find(c=>c.canal===f.canal)?.receita || 0) / total;
+  }
+  if (f.categoria && exclude !== 'categoria') {
+    const total = DATA.categorias.reduce((a,b)=>a+b.receita,0);
+    share *= (DATA.categorias.find(c=>c.nome===f.categoria)?.receita || 0) / total;
+  }
+  if (f.estado && exclude !== 'estado') {
+    const total = DATA.estados.reduce((a,b)=>a+b.receita,0);
+    share *= (DATA.estados.find(e=>e.uf===f.estado)?.receita || 0) / total;
+  }
+  if (f.pagamento && exclude !== 'pagamento') {
+    const total = DATA.pagamento.reduce((a,b)=>a+b.receita,0);
+    share *= (DATA.pagamento.find(p=>p.tipo===f.pagamento)?.receita || 0) / total;
+  }
+  return share;
+}
+
+// Mês-base (% de pedidos do período filtrado sobre o total)
+function getPeriodShare() {
+  const f = getFilters();
+  const totalPedidos = DATA.meses.reduce((a,m)=>a+m.pedidos,0);
+  const filteredPedidos = DATA.meses.filter(m => m.mes >= f.from && m.mes <= f.to).reduce((a,m)=>a+m.pedidos,0);
+  return totalPedidos > 0 ? filteredPedidos / totalPedidos : 0;
+}
+
+function calcKPIs() {
+  const meses = getMesesFiltrados();
+  const receita = meses.reduce((a,m)=>a+m.receita,0);
+  const devolucoes = meses.reduce((a,m)=>a+m.devolucoes,0);
+  const descontos = meses.reduce((a,m)=>a+m.descontos,0);
+  const frete = meses.reduce((a,m)=>a+m.frete,0);
+  const pedidos = meses.reduce((a,m)=>a+m.pedidos,0);
+  const liquida = receita - devolucoes - descontos;
+  const cmv = liquida * 0.60;
+  const lucroBruto = liquida - cmv;
+  const resultadoOp = lucroBruto - frete;
+  const margemBruta = liquida > 0 ? lucroBruto / liquida : 0;
+  const margemLiquida = receita > 0 ? resultadoOp / receita : 0;
+  const ticket = pedidos > 0 ? receita / pedidos : 0;
+  const taxaDevolucao = pedidos > 0 ? 0.07 : 0;
+  const itens = meses.reduce((a,m)=>a + (m.pedidos*1.95), 0);
+  return { receita, devolucoes, descontos, frete, pedidos, liquida, cmv, lucroBruto, resultadoOp, margemBruta, margemLiquida, ticket, taxaDevolucao, itens };
+}
+
+// ============ TABS ============
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('panel-' + t.dataset.panel).classList.add('active');
+    setTimeout(renderActivePanel, 50);
+  });
+});
+
+// ============ CHARTS ============
+const charts = {};
+const baseChartOpts = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { color: COLORS.muted, font: { size: 11 } } },
+    tooltip: {
+      backgroundColor: COLORS.primary, padding: 10, cornerRadius: 6,
+      titleFont: { size: 12 }, bodyFont: { size: 12 }
+    }
+  },
+  scales: {
+    y: { ticks: { color: COLORS.muted, callback: v => brlShort(v) }, grid: { color: '#EFEFEF' } },
+    x: { ticks: { color: COLORS.muted }, grid: { display: false } }
+  }
+};
+
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+function renderVisaoGeral() {
+  const k = calcKPIs();
+  document.getElementById('kpi-receita').textContent = brl(k.receita);
+  document.getElementById('kpi-liquida').textContent = brl(k.liquida);
+  document.getElementById('kpi-lucro').textContent = brl(k.lucroBruto);
+  document.getElementById('kpi-margem').textContent = 'Margem ' + pct(k.margemBruta);
+  document.getElementById('kpi-ticket').textContent = brl(k.ticket);
+  document.getElementById('kpi-pedidos').textContent = num(k.pedidos) + ' pedidos';
+  document.getElementById('kpi-devolucao').textContent = pct(k.taxaDevolucao);
+  document.getElementById('kpi-devolucao-val').textContent = brl(k.devolucoes) + ' devolvidos';
+
+  // Tendência
+  const meses = getMesesFiltrados();
+  destroyChart('tendencia');
+  charts.tendencia = new Chart(document.getElementById('chart-tendencia'), {
+    type: 'bar',
+    data: {
+      labels: meses.map(m=>m.nome),
+      datasets: [{
+        label: 'Receita',
+        data: meses.map(m=>m.receita),
+        backgroundColor: COLORS.accent,
+        borderRadius: 6
+      }, {
+        label: 'Média Móvel 3M',
+        data: meses.map((m,i,arr) => {
+          const slice = arr.slice(Math.max(0,i-2), i+1);
+          return slice.reduce((a,b)=>a+b.receita,0)/slice.length;
+        }),
+        type: 'line',
+        borderColor: COLORS.amber,
+        backgroundColor: 'transparent',
+        tension: 0.4,
+        pointBackgroundColor: COLORS.amber,
+        pointRadius: 4,
+        borderWidth: 3
+      }]
+    },
+    options: baseChartOpts
+  });
+
+  // Categoria donut — escala por outras dimensões e período
+  destroyChart('categoria');
+  const f = getFilters();
+  const pShare = getPeriodShare();
+  const otherCat = getOtherDimShare('categoria') * pShare;
+  let cats = DATA.categorias.map(c => ({...c, receita: c.receita * otherCat}));
+  if (f.categoria) cats = cats.filter(c => c.nome === f.categoria);
+  charts.categoria = new Chart(document.getElementById('chart-categoria'), {
+    type: 'doughnut',
+    data: {
+      labels: cats.map(c=>c.nome),
+      datasets: [{
+        data: cats.map(c=>c.receita),
+        backgroundColor: PALETTE,
+        borderWidth: 2,
+        borderColor: '#FFF'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '60%',
+      plugins: {
+        legend: { position: 'right', labels: { color: COLORS.text, font:{size:11}, padding: 10 } },
+        tooltip: { callbacks: { label: c => c.label + ': ' + brl(c.parsed) } }
+      }
+    }
+  });
+
+  // Top produtos — filtra por categoria, escala por demais dimensões
+  const tbody = document.getElementById('tbl-produtos');
+  tbody.innerHTML = '';
+  const otherProd = getOtherDimShare('categoria') * pShare;
+  let prods = DATA.produtos.map(p => ({...p, receita: p.receita * otherProd, pedidos: Math.round(p.pedidos * otherProd)}));
+  if (f.categoria) prods = prods.filter(p => p.categoria === f.categoria);
+  if (prods.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">Sem produtos para os filtros selecionados</td></tr>';
+  } else {
+    const maxRec = Math.max(...prods.map(p=>p.receita));
+    prods.forEach(p => {
+      const tr = document.createElement('tr');
+      const w = (p.receita/maxRec*100).toFixed(1);
+      tr.innerHTML = `<td>${p.produto}</td><td>${p.categoria}</td><td class="num bar" style="--w:${w}%"><b>${brl(p.receita)}</b></td><td class="num">${num(p.pedidos)}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Estados — escala por outras dimensões
+  const otherEst = getOtherDimShare('estado') * pShare;
+  let ests = DATA.estados.map(e => ({...e, receita: e.receita * otherEst}));
+  if (f.estado) ests = ests.filter(e => e.uf === f.estado);
+  destroyChart('estado');
+  charts.estado = new Chart(document.getElementById('chart-estado'), {
+    type: 'bar',
+    data: {
+      labels: ests.map(e=>e.uf),
+      datasets: [{
+        label: 'Receita',
+        data: ests.map(e=>e.receita),
+        backgroundColor: COLORS.primary,
+        borderRadius: 6
+      }]
+    },
+    options: { ...baseChartOpts, indexAxis: 'y',
+      scales: {
+        x: { ticks: { color: COLORS.muted, callback: v => brlShort(v) }, grid: { color: '#EFEFEF' } },
+        y: { ticks: { color: COLORS.muted }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderDRE() {
+  const k = calcKPIs();
+  document.getElementById('dre-rb').textContent = brl(k.receita);
+  document.getElementById('dre-rl').textContent = brl(k.liquida);
+  document.getElementById('dre-lb').textContent = brl(k.lucroBruto);
+  document.getElementById('dre-mb').textContent = 'Margem Bruta ' + pct(k.margemBruta);
+  document.getElementById('dre-ro').textContent = brl(k.resultadoOp);
+  document.getElementById('dre-ml').textContent = 'Margem Líquida ' + pct(k.margemLiquida);
+
+  document.getElementById('dre-line-rb').textContent = brl(k.receita);
+  document.getElementById('dre-line-dev').textContent = '− ' + brl(k.devolucoes);
+  document.getElementById('dre-line-desc').textContent = '− ' + brl(k.descontos);
+  document.getElementById('dre-line-rl').textContent = brl(k.liquida);
+  document.getElementById('dre-line-cmv').textContent = '− ' + brl(k.cmv);
+  document.getElementById('dre-line-lb').textContent = brl(k.lucroBruto);
+  document.getElementById('dre-line-frete').textContent = '− ' + brl(k.frete);
+  document.getElementById('dre-line-ro').textContent = brl(k.resultadoOp);
+
+  // Cascata (waterfall simulated with bars)
+  destroyChart('cascata');
+  const cascataLabels = ['Receita Bruta','(−)Devoluções','(−)Descontos','Receita Líquida','(−)CMV','Lucro Bruto','(−)Frete','Resultado'];
+  const cascataValues = [k.receita, -k.devolucoes, -k.descontos, k.liquida, -k.cmv, k.lucroBruto, -k.frete, k.resultadoOp];
+  const cascataColors = [COLORS.primary, COLORS.coral, COLORS.coral, COLORS.accent, COLORS.coral, COLORS.positive, COLORS.coral, COLORS.primary];
+  charts.cascata = new Chart(document.getElementById('chart-cascata'), {
+    type: 'bar',
+    data: {
+      labels: cascataLabels,
+      datasets: [{
+        data: cascataValues,
+        backgroundColor: cascataColors,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      ...baseChartOpts,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => brl(c.parsed.y) } } }
+    }
+  });
+
+  // Detalhamento mensal
+  destroyChart('dreMensal');
+  const meses = getMesesFiltrados();
+  charts.dreMensal = new Chart(document.getElementById('chart-dre-mensal'), {
+    type: 'bar',
+    data: {
+      labels: meses.map(m=>m.nome),
+      datasets: [
+        { label: 'Receita Líquida', data: meses.map(m => m.receita - m.devolucoes - m.descontos), backgroundColor: COLORS.accent, borderRadius: 4, stack: 'a' },
+        { label: 'CMV (60%)', data: meses.map(m => -(m.receita - m.devolucoes - m.descontos)*0.6), backgroundColor: COLORS.coral, borderRadius: 4, stack: 'b' },
+        { label: 'Lucro Bruto', data: meses.map(m => (m.receita - m.devolucoes - m.descontos)*0.4), type: 'line', borderColor: COLORS.amber, backgroundColor: 'transparent', tension: 0.3, pointRadius: 4, borderWidth: 3, yAxisID: 'y' }
+      ]
+    },
+    options: baseChartOpts
+  });
+}
+
+function renderDFC() {
+  const k = calcKPIs();
+  document.getElementById('dfc-in').textContent = brl(k.receita);
+  document.getElementById('dfc-out').textContent = brl(k.devolucoes + k.frete);
+  document.getElementById('dfc-net').textContent = brl(k.receita - k.devolucoes - k.frete);
+  // % entregues = receita "Entregue" / total
+  const entreguePct = 3523428.75 / 5775324.29;
+  document.getElementById('dfc-entregues').textContent = pct(entreguePct);
+
+  // Fluxo mensal
+  destroyChart('dfcFluxo');
+  const meses = getMesesFiltrados();
+  let acc = 0;
+  const saldo = meses.map(m => { acc += m.receita - m.devolucoes - m.frete; return acc; });
+  charts.dfcFluxo = new Chart(document.getElementById('chart-dfc-fluxo'), {
+    type: 'bar',
+    data: {
+      labels: meses.map(m=>m.nome),
+      datasets: [
+        { label: 'Entradas', data: meses.map(m=>m.receita), backgroundColor: COLORS.accent, borderRadius: 4, stack: 'in' },
+        { label: 'Saídas Devoluções', data: meses.map(m=>-m.devolucoes), backgroundColor: COLORS.coral, borderRadius: 4, stack: 'out' },
+        { label: 'Saídas Frete', data: meses.map(m=>-m.frete), backgroundColor: COLORS.amber, borderRadius: 4, stack: 'out' },
+        { label: 'Saldo Acumulado', data: saldo, type: 'line', borderColor: COLORS.primary, backgroundColor: 'transparent', tension: 0.3, pointBackgroundColor: COLORS.primary, pointRadius: 4, borderWidth: 3, yAxisID: 'y1' }
+      ]
+    },
+    options: {
+      ...baseChartOpts,
+      scales: {
+        y: { stacked: true, ticks: { color: COLORS.muted, callback: v => brlShort(v) }, grid: { color: '#EFEFEF' } },
+        y1: { position: 'right', ticks: { color: COLORS.primary, callback: v => brlShort(v) }, grid: { display: false } },
+        x: { stacked: true, ticks: { color: COLORS.muted }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Pagamento — escala por outras dimensões
+  destroyChart('pagamento');
+  const f = getFilters();
+  const pShare = getPeriodShare();
+  const otherPag = getOtherDimShare('pagamento') * pShare;
+  let pags = DATA.pagamento.map(p => ({...p, receita: p.receita * otherPag}));
+  if (f.pagamento) pags = pags.filter(p => p.tipo === f.pagamento);
+  charts.pagamento = new Chart(document.getElementById('chart-pagamento'), {
+    type: 'doughnut',
+    data: {
+      labels: pags.map(p=>p.tipo),
+      datasets: [{
+        data: pags.map(p=>p.receita),
+        backgroundColor: [COLORS.accent, COLORS.amber, COLORS.primary],
+        borderWidth: 2, borderColor: '#FFF'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '55%',
+      plugins: {
+        legend: { position: 'right', labels: { color: COLORS.text, padding: 10, font:{size:11} } },
+        tooltip: { callbacks: { label: c => c.label + ': ' + brl(c.parsed) } }
+      }
+    }
+  });
+
+  // Status — escala por share total
+  destroyChart('status');
+  const allShare = getDimShare() * pShare;
+  charts.status = new Chart(document.getElementById('chart-status'), {
+    type: 'bar',
+    data: {
+      labels: DATA.statusPedido.map(s=>s.status),
+      datasets: [{
+        data: DATA.statusPedido.map(s=>s.receita * allShare),
+        backgroundColor: [COLORS.positive, COLORS.negative, COLORS.amber],
+        borderRadius: 6
+      }]
+    },
+    options: { ...baseChartOpts, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => brl(c.parsed.y) } } } }
+  });
+}
+
+function renderVendas() {
+  const k = calcKPIs();
+  document.getElementById('vendas-itens').textContent = num(Math.round(k.itens));
+  document.getElementById('vendas-pedidos').textContent = num(k.pedidos);
+  document.getElementById('vendas-preco').textContent = brl(k.itens > 0 ? k.receita / k.itens : 0);
+  document.getElementById('vendas-pct-desconto').textContent = pct(k.receita > 0 ? k.descontos / k.receita : 0);
+
+  const f = getFilters();
+  const pShare = getPeriodShare();
+
+  // Canal — escala por outras dimensões
+  destroyChart('canal');
+  const otherCanal = getOtherDimShare('canal') * pShare;
+  let canais = DATA.canais.map(c => ({...c, receita: c.receita * otherCanal}));
+  if (f.canal) canais = canais.filter(c => c.canal === f.canal);
+  charts.canal = new Chart(document.getElementById('chart-canal'), {
+    type: 'pie',
+    data: {
+      labels: canais.map(c=>c.canal),
+      datasets: [{ data: canais.map(c=>c.receita), backgroundColor: [COLORS.accent, COLORS.amber, COLORS.primary], borderWidth: 2, borderColor: '#FFF' }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { color: COLORS.text, padding: 10, font:{size:11} } },
+        tooltip: { callbacks: { label: c => c.label + ': ' + brl(c.parsed) } }
+      }
+    }
+  });
+
+  // Canal x Mês — escala por outras dimensões
+  destroyChart('canalMes');
+  const otherCM = getOtherDimShare('canal');
+  const mesesNums = DATA.meses.filter(m => m.mes >= f.from && m.mes <= f.to).map(m=>m.mes);
+  const canaisDistintos = f.canal ? [f.canal] : ['Site','Marketplace','App'];
+  charts.canalMes = new Chart(document.getElementById('chart-canal-mes'), {
+    type: 'line',
+    data: {
+      labels: mesesNums.map(m => NOMES_MES[m-1]),
+      datasets: canaisDistintos.map((cn, idx) => ({
+        label: cn,
+        data: mesesNums.map(m => {
+          const e = DATA.canalMes.find(x => x.m===m && x.c===cn);
+          return e ? e.v * otherCM : 0;
+        }),
+        borderColor: [COLORS.accent, COLORS.amber, COLORS.primary][idx],
+        backgroundColor: 'transparent',
+        tension: 0.4, pointRadius: 3, borderWidth: 2.5
+      }))
+    },
+    options: baseChartOpts
+  });
+
+  // Categorias — escala por outras dimensões, filtra se categoria ativa
+  const tCat = document.getElementById('tbl-categorias');
+  tCat.innerHTML = '';
+  const otherCatT = getOtherDimShare('categoria') * pShare;
+  let cats = DATA.categorias.map(c => ({...c, receita: c.receita * otherCatT, pedidos: Math.round(c.pedidos * otherCatT), itens: Math.round(c.itens * otherCatT)}));
+  if (f.categoria) cats = cats.filter(c => c.nome === f.categoria);
+  if (cats.length === 0) {
+    tCat.innerHTML = '<tr><td colspan="4" class="empty">Sem dados</td></tr>';
+  } else {
+    const maxC = Math.max(...cats.map(c=>c.receita));
+    cats.forEach(c => {
+      const tr = document.createElement('tr');
+      const w = (c.receita/maxC*100).toFixed(1);
+      tr.innerHTML = `<td>${c.nome}</td><td class="num bar" style="--w:${w}%"><b>${brl(c.receita)}</b></td><td class="num">${num(c.pedidos)}</td><td class="num">${num(c.itens)}</td>`;
+      tCat.appendChild(tr);
+    });
+  }
+
+  // Estados — escala por outras dimensões, filtra se estado ativo
+  const tEst = document.getElementById('tbl-estados');
+  tEst.innerHTML = '';
+  const otherEstT = getOtherDimShare('estado') * pShare;
+  let ests = DATA.estados.map(e => ({...e, receita: e.receita * otherEstT, pedidos: Math.round(e.pedidos * otherEstT)}));
+  if (f.estado) ests = ests.filter(e => e.uf === f.estado);
+  if (ests.length === 0) {
+    tEst.innerHTML = '<tr><td colspan="4" class="empty">Sem dados</td></tr>';
+  } else {
+    const maxE = Math.max(...ests.map(e=>e.receita));
+    ests.forEach(e => {
+      const tr = document.createElement('tr');
+      const w = (e.receita/maxE*100).toFixed(1);
+      const ticket = e.pedidos > 0 ? e.receita/e.pedidos : 0;
+      tr.innerHTML = `<td><b>${e.uf}</b></td><td class="num bar" style="--w:${w}%"><b>${brl(e.receita)}</b></td><td class="num">${num(e.pedidos)}</td><td class="num">${brl(ticket)}</td>`;
+      tEst.appendChild(tr);
+    });
+  }
+}
+
+function renderDevolucoes() {
+  const k = calcKPIs();
+  const f = getFilters();
+  const allShare = getDimShare() * getPeriodShare();
+  const qtdDev = Math.round(DATA.devolucoesStatus.reduce((a,b)=>a+b.qtd,0) * allShare);
+  document.getElementById('dev-qtd').textContent = num(qtdDev);
+  document.getElementById('dev-valor').textContent = brl(k.devolucoes);
+  document.getElementById('dev-taxa').textContent = pct(k.taxaDevolucao);
+  document.getElementById('dev-pct').textContent = pct(k.receita > 0 ? k.devolucoes/k.receita : 0);
+
+  // Devoluções por mês
+  destroyChart('devMes');
+  const meses = getMesesFiltrados();
+  charts.devMes = new Chart(document.getElementById('chart-dev-mes'), {
+    type: 'line',
+    data: {
+      labels: meses.map(m=>m.nome),
+      datasets: [{
+        label: 'Valor Devolvido',
+        data: meses.map(m=>m.devolucoes),
+        borderColor: COLORS.coral,
+        backgroundColor: 'rgba(231, 111, 81, 0.1)',
+        fill: true, tension: 0.4, pointRadius: 4, borderWidth: 3
+      }]
+    },
+    options: baseChartOpts
+  });
+
+  // Status devoluções — escala por share
+  destroyChart('devStatus');
+  charts.devStatus = new Chart(document.getElementById('chart-dev-status'), {
+    type: 'doughnut',
+    data: {
+      labels: DATA.devolucoesStatus.map(s=>s.status),
+      datasets: [{
+        data: DATA.devolucoesStatus.map(s=>Math.round(s.qtd * allShare)),
+        backgroundColor: [COLORS.positive, COLORS.amber],
+        borderWidth: 2, borderColor: '#FFF'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '60%',
+      plugins: {
+        legend: { position: 'right', labels: { color: COLORS.text, padding: 10, font:{size:11} } },
+        tooltip: { callbacks: { label: c => c.label + ': ' + c.parsed + ' devs' } }
+      }
+    }
+  });
+
+  // Estoque — filtra por categoria
+  let estoque = [...DATA.estoque];
+  if (f.categoria) estoque = estoque.filter(e => e.categoria === f.categoria);
+  const totAtual = estoque.reduce((a,b)=>a+b.atual,0);
+  const totMin = estoque.reduce((a,b)=>a+b.minimo,0);
+  document.getElementById('est-atual').textContent = num(totAtual);
+  document.getElementById('est-min').textContent = num(totMin);
+  document.getElementById('est-folga').textContent = num(totAtual - totMin);
+
+  const tbody = document.getElementById('tbl-estoque');
+  tbody.innerHTML = '';
+  if (estoque.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">Sem produtos para os filtros selecionados</td></tr>';
+  } else {
+    estoque.forEach(e => {
+      const folga = e.atual - e.minimo;
+      const ratio = e.atual / e.minimo;
+      let pill = `<span class="pill ok">Ok</span>`;
+      if (ratio < 1) pill = `<span class="pill bad">Crítico</span>`;
+      else if (ratio < 2) pill = `<span class="pill warn">Atenção</span>`;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${e.produto}</td><td>${e.categoria}</td><td class="num">${num(e.atual)}</td><td class="num">${num(e.minimo)}</td><td class="num"><b style="color:${folga<0?COLORS.negative:COLORS.positive}">${folga>0?'+':''}${num(folga)}</b></td><td>${pill}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+}
+
+// ============ ROUTER ============
+function renderActivePanel() {
+  const active = document.querySelector('.tab.active').dataset.panel;
+  if (active === 'visao') renderVisaoGeral();
+  if (active === 'dre') renderDRE();
+  if (active === 'dfc') renderDFC();
+  if (active === 'vendas') renderVendas();
+  if (active === 'devolucoes') renderDevolucoes();
+}
+
+function applyFilters() {
+  renderActivePanel();
+}
+
+function exportData() {
+  const k = calcKPIs();
+  const rows = [
+    ['KPI','Valor'],
+    ['Receita Bruta', k.receita.toFixed(2)],
+    ['Receita Líquida', k.liquida.toFixed(2)],
+    ['Lucro Bruto', k.lucroBruto.toFixed(2)],
+    ['Resultado Operacional', k.resultadoOp.toFixed(2)],
+    ['Margem Bruta %', (k.margemBruta*100).toFixed(2)],
+    ['Margem Líquida %', (k.margemLiquida*100).toFixed(2)],
+    ['Ticket Médio', k.ticket.toFixed(2)],
+    ['Qtd Pedidos', k.pedidos]
+  ];
+  const csv = rows.map(r=>r.join(';')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'dashboard_export.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============ INIT ============
+initFilters();
+renderActivePanel();
+</script>
+</body>
+</html>
