@@ -63,9 +63,9 @@ O fluxo é **idempotente**: o ELT aplica DDL e dá `TRUNCATE` antes de cada `INS
 
 | Camada | Tecnologia | Versão | Propósito |
 |---|---|---|---|
-| Linguagem | Python | 3.13 | ETL, geração de apresentação |
+| Linguagem | Python | 3.13 | ELT, geração de apresentação |
 | Package manager | uv | latest | Resolução determinística de deps |
-| ETL / DataFrame | pandas | ≥ 3.0 | Leitura de CSVs e transformações |
+| ELT / DataFrame | pandas | ≥ 3.0 | Leitura de CSVs e transformações |
 | ORM / SQL | SQLAlchemy | ≥ 2.0 | Conexão e execução de DDL/DML |
 | Driver | psycopg2-binary | ≥ 2.9 | Driver PostgreSQL |
 | Config | python-dotenv | ≥ 1.2 | Variáveis de ambiente |
@@ -80,7 +80,7 @@ O fluxo é **idempotente**: o ELT aplica DDL e dá `TRUNCATE` antes de cada `INS
 
 ```
 projeto_pipeline_ecommerce/
-├── config/                      # ⚠️ gitignored — credenciais
+├── config/                      # Credenciais
 │   ├── .env                     # PostgreSQL connection params
 │   └── postgres-init.sql        # Cria usuário/banco airflow
 ├── data/                        # CSVs de entrada
@@ -176,14 +176,7 @@ cd projeto_pipeline_ecommerce
 # Sincroniza dependências do pyproject.toml + uv.lock
 uv sync
 
-# Configure o .env (não está versionado)
-cat > config/.env <<EOF
-USER_POSTGRES=postgres
-PASSWORD_POSTGRES=postgres
-HOST_POSTGRES=localhost
-PORT_POSTGRES=5433
-DATABASE_POSTGRES=postgres
-EOF
+# Configure o seu .env 
 
 # Roda o ELT: aplica DDL e carrega os 3 CSVs
 uv run python scripts/carregar.py
