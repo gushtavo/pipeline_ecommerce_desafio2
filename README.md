@@ -37,7 +37,7 @@ A entrega cobre dois frentes complementares:
 
 O escopo analítico inclui **DRE (Demonstrativo de Resultado)**, **DFC (Fluxo de Caixa)**, análise de vendas multidimensional, taxa de devolução e cobertura de estoque.
 
-📈 **Link Dashboard:**
+📈 **Link Dashboard:** [Dashboard Ecommerce](https://gushtavo.github.io/dashboard_ecommerce/)📊
 
 ---
 
